@@ -1,4 +1,3 @@
-import Agent from "./Agent";
 import Logo from "./Logo";
 import MainNav from "./Mainnav";
 

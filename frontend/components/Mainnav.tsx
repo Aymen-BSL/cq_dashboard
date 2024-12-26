@@ -46,6 +46,17 @@ export default function MainNav() {
         <LuTicketSlash size={20} />
         Our Tickets
       </Link>
+
+      <Link
+        href="/sign-in"
+        className={clsx(
+          "mt-4 flex items-center gap-4 p-2 py-4 rounded-md text-grey-700 hover:text-grey-900 hover:bg-grey-100 bg-blue-500",
+          pathname === "/departTickets" && "bg-grey-0 text-white"
+        )}
+      >
+        <IconUserBolt size={20} />
+        Sign in
+      </Link>
     </nav>
   );
 }

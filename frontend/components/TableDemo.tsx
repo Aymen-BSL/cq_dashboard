@@ -11,10 +11,10 @@ import {
   TableRow,
 } from "./ui/table";
 
-export function TableDemo() {
-  const [data, setData] = useState([]);
+export function TableDemo({ tickets }) {
+  const [data, setData] = useState(tickets);
   const [status, setStatus] = useState({});
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
 
@@ -27,6 +27,8 @@ export function TableDemo() {
         setLoading(false);
         return;
       }
+
+      if (tickets) return;
 
       try {
         const res = await fetch(
@@ -57,11 +59,44 @@ export function TableDemo() {
     fetchTickets();
   }, []);
 
-  const handleStatusChange = (ticketId: string, newStatus: string) => {
-    setStatus((prevStatus) => ({
-      ...prevStatus,
-      [ticketId]: newStatus,
-    }));
+  const handleStatusChange = async (ticketId: string, newStatus: string) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setError("Authentication token is missing.");
+      return;
+    }
+
+    try {
+      // Send a POST request to change the ticket status
+      const res = await fetch(
+        "https://975b-41-229-85-253.ngrok-free.app/change_ticket_status",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            token: token,
+          },
+          body: JSON.stringify({
+            ticket_id: ticketId,
+            status: newStatus,
+          }),
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Failed to update ticket status.");
+      }
+
+      // Update the local state with the new status
+      setStatus((prevStatus) => ({
+        ...prevStatus,
+        [ticketId]: newStatus,
+      }));
+    } catch (err) {
+      console.error(err);
+      setError("Unable to update ticket status.");
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -159,7 +194,6 @@ export function TableDemo() {
                 {ticket.client_contact}
               </TableCell>
               <TableCell className="text-lg p-4 text-grey-700 text-center">
-                {/* {ticket.created} */}
                 {getTodayDate()}
               </TableCell>
 

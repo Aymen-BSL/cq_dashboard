@@ -20,7 +20,7 @@ export default function AllTicketsPage() {
 
       try {
         const res = await fetch(
-          "https://975b-41-229-85-253.ngrok-free.app/get_ticket_list",
+          "https://975b-41-229-85-253.ngrok-free.app/get_ticket_list?all=1",
           {
             method: "GET",
             headers: {
